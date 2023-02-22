@@ -13,28 +13,45 @@ find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
 
 
-include_directories(include)
-add_library(${PROJECT_NAME} src/transmission_manager.cpp include/transmission_manager/transmission_manager.hpp)
-ament_target_dependencies(${PROJECT_NAME}
-  transmission_interface
-  hardware_interface
-  rclcpp
-  pluginlib
-)
-ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
-install(
-  DIRECTORY include/${PROJECT_NAME}
-  DESTINATION include
-)
-install(TARGETS ${PROJECT_NAME}
-  DESTINATION lib/${PROJECT_NAME})
-install(
-    TARGETS ${PROJECT_NAME}
-    EXPORT ${PROJECT_NAME}
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
-  )
+add_library(${PROJECT_NAME} INTERFACE)
 
-  ament_package()
+target_include_directories(${PROJECT_NAME} INTERFACE
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include>"
+)
+
+install(TARGETS ${PROJECT_NAME}
+  EXPORT "export_${PROJECT_NAME}"
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib
+  INCLUDES DESTINATION include
+)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION include/${PROJECT_NAME}
+)
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_gmock REQUIRED)
+  find_package(transmission_interface REQUIRED)
+  find_package(hardware_interface REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(pluginlib REQUIRED)
+
+  ament_add_gmock(
+    test_transmission_manager
+    test/test_transmission_manager.cpp
+  )
+  target_include_directories(test_transmission_manager PRIVATE include)
+  ament_target_dependencies(test_transmission_manager
+    transmission_interface
+    hardware_interface
+    rclcpp
+    pluginlib
+  )
+endif()
+
+ament_export_targets("export_${PROJECT_NAME}")
+
+ament_package()
