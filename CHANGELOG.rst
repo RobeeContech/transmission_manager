@@ -3,6 +3,9 @@ Changelog for package transmission_manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-0.0.1 (2022-21-8)
+1.0.0 (2023-22-2)
 ------------------
-* Implemented basic class that dynamically loads all type of transmissions from hardware_interface.info 
+* Implemented header only class that dynamically loads all type of transmissions from hardware_interface.info 
+* implement unit tests for transmission_manager
+* all unit tests pass
+* Contributors: yoav fekete

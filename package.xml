@@ -3,9 +3,9 @@
 <package format="3">
   <name>transmission_manager</name>
   <version>1.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="yoav@robeecontech.com">yoav</maintainer>
-  <license>TODO: License declaration</license>
+  <description>transmission_manager is a header only class that dynamicly loades all transmission for hardware interface info. aimed to be  used in hardware interface to convert all joints commands to actuator commands and actuator states to joint states.</description>
+  <maintainer email="yoav@robeecontech.com">Yoav Fekete</maintainer>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
