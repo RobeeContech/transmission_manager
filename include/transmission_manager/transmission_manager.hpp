@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "transmission_interface/transmission_loader.hpp"
+#include "transmission_manager/offset_transmission_wrapper.hpp"
 #include "transmission_interface/transmission.hpp"
 #include <hardware_interface/hardware_info.hpp>
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
@@ -160,13 +161,14 @@ namespace transmission_manager
                                    const hardware_interface::TransmissionInfo& info,
                                    const bool is_state)
              {
-                std::shared_ptr<transmission_interface::Transmission>  transmission(loader->load(info));
+                auto transmission = loader->load(info));
                 if (!transmission ) {
                     RCLCPP_FATAL_STREAM(rclcpp::get_logger(s_transmission_manager),"TransmissionLoader.load failed for "<<info.type<< " for joint " << info.joints[0].name);
                     return false;
                 }
-                if (is_state) state_transmissions_.push_back(transmission);
-                else          cmd_transmissions_.push_back(transmission);
+                std::vector<double> joint_offset(transmission->num_joints,0);
+                if (is_state) state_transmissions_.emplace_back(transmission,joint_offset);
+                else          cmd_transmissions_.emplace_back(transmission,joint_offset);
                 return true;
             }   
          
@@ -183,10 +185,16 @@ namespace transmission_manager
                 }
                 return load_transmission(transmission_loader,info, false) && load_transmission(transmission_loader,info,true);
             }
+
+            // export
            
+            // bool update_offsets(std::vector<double>& offsets) 
+            // {
+
+            // }
             
-            std::vector<std::shared_ptr<transmission_interface::Transmission>> state_transmissions_;
-            std::vector<std::shared_ptr<transmission_interface::Transmission>> cmd_transmissions_;
+            std::vector<std::shared_ptr<OffsetTransmissionWrapper>> state_transmissions_;
+            std::vector<std::shared_ptr<OffsetTransmissionWrapper>> cmd_transmissions_;
     };       
 }
 #endif  // TRANSMISSION_MANAGER__HPP_
