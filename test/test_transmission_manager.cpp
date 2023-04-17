@@ -57,6 +57,9 @@ TEST(TransmissionManagerTest, ScaraTransmission)
             <offset>-0.0</offset>
             <mechanical_reduction>-1.0</mechanical_reduction>
           </joint>
+          <param name="ppr1">4000</param>
+          <param name="ppr2">8000</param>
+          <param name="screw_reduction">250</param>
         </transmission>
       </ros2_control>
     </robot>
