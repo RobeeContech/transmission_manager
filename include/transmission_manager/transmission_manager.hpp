@@ -20,10 +20,19 @@ namespace transmission_manager
     
     constexpr const char * s_transmission_manager = "transmission_manager";
 
-
+    /**
+     * @brief class to handle the loading of transmission plugins
+     * 
+     */
     class TransmissionPluginLoader
     {
         public:
+        /**
+         * @brief create a transmission plugin instance
+         * 
+         * @param type 
+         * @return std::shared_ptr<transmission_interface::TransmissionLoader> 
+         */
             std::shared_ptr<transmission_interface::TransmissionLoader> create(const std::string & type)
             {
                 try
@@ -43,10 +52,16 @@ namespace transmission_manager
                 "transmission_interface", "transmission_interface::TransmissionLoader"};
     };
 
-
+    /**
+     * @brief class to manage the transmission of a joint
+     * 
+     */
     class TransmissionManager {
         public:
-
+            /**
+             * @brief joint to actuator
+             * 
+             */
             inline void cmd_joint_to_actuator()
             {
                 for (auto& trans : cmd_transmissions_)
@@ -54,7 +69,10 @@ namespace transmission_manager
                     trans->joint_to_actuator();
                 }
             }
-
+            /**
+             * @brief actuator to joint
+             * 
+             */
             inline void state_actuator_to_joint()
             {
                 for (auto& trans : state_transmissions_)
@@ -62,7 +80,13 @@ namespace transmission_manager
                     trans->actuator_to_joint();
                 }
             }
-         
+            /**
+             * @brief init the transmission and load it
+             * 
+             * @param info 
+             * @return true 
+             * @return false 
+             */
             bool init(const hardware_interface::HardwareInfo& info)
             {
                 if (!validate(info)) return false;
@@ -72,7 +96,13 @@ namespace transmission_manager
                 }
                 return true;
             }
-
+            /**
+             * @brief config actuator to joint
+             * 
+             * @param info 
+             * @param joint_handles 
+             * @param actuator_handles 
+             */
             void config_states_transmissions(
                 const hardware_interface::HardwareInfo&             info,
                 std::map<std::string,std::vector<JointHandle>>&     joint_handles, 
@@ -80,7 +110,13 @@ namespace transmission_manager
             {
                 config_transmission(state_transmissions_, info, joint_handles, actuator_handles);
             }
-
+            /**
+             * @brief config joint to actuator
+             * 
+             * @param info 
+             * @param joint_handles 
+             * @param actuator_handles 
+             */
             void config_commands_transmissions(
                 const hardware_interface::HardwareInfo&             info,
                 std::map<std::string,std::vector<JointHandle>>&     joint_handles, 
@@ -90,7 +126,13 @@ namespace transmission_manager
             }
 
         private:
-
+            /**
+             * @brief validate the transmission plugin
+             * 
+             * @param info 
+             * @return true 
+             * @return false 
+             */
             bool validate(const hardware_interface::HardwareInfo& info)
             {
                 std::set<std::string> joints_in_transmissions;
@@ -134,7 +176,14 @@ namespace transmission_manager
                 }
                 return true;
             }
-
+            /**
+             * @brief config the transmission
+             * 
+             * @param transmissions 
+             * @param info 
+             * @param joint_handles 
+             * @param actuator_handles 
+             */
             void config_transmission(
                 std::vector<std::shared_ptr<transmission_interface::Transmission>>& transmissions,
                 const hardware_interface::HardwareInfo&                             info,
@@ -155,7 +204,15 @@ namespace transmission_manager
                     transmissions[t]->configure(joint_handle, actuator_handle);
                 }
             }
-
+            /**
+             * @brief load the transmission
+             * 
+             * @param loader 
+             * @param info 
+             * @param is_state 
+             * @return true 
+             * @return false 
+             */
             bool load_transmission(const std::shared_ptr<transmission_interface::TransmissionLoader>& loader,
                                    const hardware_interface::TransmissionInfo& info,
                                    const bool is_state)
@@ -170,7 +227,13 @@ namespace transmission_manager
                 return true;
             }   
          
-
+            /**
+             * @brief load the transmission
+             * 
+             * @param info 
+             * @return true 
+             * @return false 
+             */
             bool load_transmission(const hardware_interface::TransmissionInfo& info)
             {
                 TransmissionPluginLoader loader; 
